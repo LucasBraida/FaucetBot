@@ -1,12 +1,14 @@
 const { ethers } = require('ethers')
+const {ETH_WALLET_PRIVATE_KEY, ALCHEMY_API_KEY} = require('./config.json')
+const {abi} = require('./IERC20.json')
 const networks = [
     {
         networkName: 'goerli',
-        walletPrivateKey: '',
+        walletPrivateKey: ETH_WALLET_PRIVATE_KEY,
         providers: [
             {
                 providerName: 'alchemy',
-                apiKey: '',
+                apiKey: ALCHEMY_API_KEY,
                 available: true
             },
             {
@@ -22,7 +24,7 @@ const networks = [
             },
             {
                 tokenName: 'link',
-                tokenAddress: '',
+                tokenAddress: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
                 nativeToken: false
             }
         ]
@@ -65,7 +67,7 @@ const NetworkConst = {
     getWallet: function (networkName) {
         const network = networks.find(n => n.networkName === networkName.toLowerCase())
         if (network) {
-            return network.aditionalTokens
+            return new ethers.Wallet(network.walletPrivateKey)
         } else {
             throw new Error('Network not listed')
         }
@@ -83,7 +85,11 @@ const NetworkConst = {
         if (network) {
             const token = network.tokens.find(token => token.tokenName === tokenName.toLowerCase())
             if(token){
-                return token
+                const tokenInfo = {
+                    ...token,
+                    tokenContract: new ethers.Contract(token.tokenAddress, abi)
+                }
+                return tokenInfo
             } else {
                 throw new Error('Token not listed')
             }

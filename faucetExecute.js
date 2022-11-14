@@ -11,10 +11,9 @@ const getProvider = networkObj => {
 }
 
 
-const sendToken = async (network,  token, receiver, value) => {
+const sendToken = async (network, token, receiver, value) => {
     if(NetworkConst.isListed(network)){
         try {
-            //const ehtersProvider = new ethers.getDefaultProvider('goerli')
             const provider = NetworkConst.getProvider(network)
             const wallet = NetworkConst.getWallet(network)
             const tokenInfo = NetworkConst.getToken(network, token)
@@ -25,7 +24,8 @@ const sendToken = async (network,  token, receiver, value) => {
                     value: ethers.utils.parseEther(value)
                 })
             } else {
-                tx = await wallet.connect(provider).transfer()
+                const walletSigner = wallet.connect(provider)
+                tx = await tokenInfo.tokenContract.connect(walletSigner).transfer(receiver, ethers.utils.parseEther(value))
             }
 
             const receipt = await tx.wait();
@@ -50,4 +50,4 @@ const sendToken = async (network,  token, receiver, value) => {
 
 }
 
-sendToken('goerli','0x658410993417A2dE0aD73706EBB34885D7F6F007', '0.001')
+sendToken('goerli', 'link','0xF3f5F2577cc3d735788922A006Fa10C49115Ddf6', '0.01')
