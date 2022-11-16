@@ -13,7 +13,7 @@ const getProvider = networkObj => {
 
 const sendToken = async (network, token, receiver, value) => {
     if(NetworkConst.isListed(network)){
-        try {
+        
             const provider = NetworkConst.getProvider(network)
             const wallet = NetworkConst.getWallet(network)
             const tokenInfo = NetworkConst.getToken(network, token)
@@ -32,19 +32,13 @@ const sendToken = async (network, token, receiver, value) => {
 
             // Check if the transaction was successfully completed
             if (receipt.status === 1) {
-                console.log("Sucessfull transaction! https://mumbai.polygonscan.com/tx/" + tx.hash);
                 return true
             } else {
-                alert("Transaction failed! Please try again");
-                return false
+                throw new Error("Transaction failed! Please try again");
             }
 
-        } catch (error) {
-            console.log(error)
-            return false
-        }
     } else {
-        console.log('not listed')
+        throw new Error('Network not listed')
     }
 
 

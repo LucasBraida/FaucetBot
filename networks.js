@@ -1,14 +1,14 @@
 const { ethers } = require('ethers')
-const {ETH_WALLET_PRIVATE_KEY, ALCHEMY_API_KEY} = require('./config.json')
+const {GOERLI_ETH_WALLET_PRIVATE_KEY, GOERLI_ALCHEMY_API_KEY} = require('./config.json')
 const {abi} = require('./IERC20.json')
 const networks = [
     {
         networkName: 'goerli',
-        walletPrivateKey: ETH_WALLET_PRIVATE_KEY,
+        walletPrivateKey: GOERLI_ETH_WALLET_PRIVATE_KEY,
         providers: [
             {
                 providerName: 'alchemy',
-                apiKey: ALCHEMY_API_KEY,
+                apiKey: GOERLI_ALCHEMY_API_KEY,
                 available: true
             },
             {
@@ -51,7 +51,7 @@ const NetworkConst = {
                         case 'alchemy':
                             return new ethers.providers.AlchemyProvider(networkName, providerInfo.apiKey)
                         case 'infura':
-                            return new ethers.providers.AlchemyProvider(networkName, providerInfo.apiKey)
+                            return new ethers.providers.InfuraProvider(networkName, providerInfo.apiKey)
                     }
 
                 } else {
