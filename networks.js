@@ -1,24 +1,53 @@
 const { ethers } = require('ethers')
-const {GOERLI_ETH_WALLET_PRIVATE_KEY, GOERLI_ALCHEMY_API_KEY} = require('./config.json')
+const {GOERLI_INFO, MUMBAI_INFO} = require('./config.json')
 const {abi} = require('./IERC20.json')
 const networks = [
     {
         networkName: 'goerli',
-        walletPrivateKey: GOERLI_ETH_WALLET_PRIVATE_KEY,
+        walletPrivateKey: GOERLI_INFO.WALLET_PRIVATE_KEY,
         providers: [
             {
                 providerName: 'alchemy',
-                apiKey: GOERLI_ALCHEMY_API_KEY,
+                apiKey: GOERLI_INFO.ALCHEMY_API_KEY,
                 available: true
             },
             {
                 providerName: 'infura',
-                apiKey: ''
+                apiKey: GOERLI_INFO.INFURA_API_KEY,
+                available: true
             }
         ],
         tokens: [
             {
                 tokenName: 'eth',
+                tokenAddress: '',
+                nativeToken: true
+            },
+            {
+                tokenName: 'link',
+                tokenAddress: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
+                nativeToken: false
+            }
+        ]
+    },
+    {
+        networkName: 'maticmum',
+        walletPrivateKey: MUMBAI_INFO.WALLET_PRIVATE_KEY,
+        providers: [
+            {
+                providerName: 'alchemy',
+                apiKey: MUMBAI_INFO.ALCHEMY_API_KEY,
+                available: true
+            },
+            {
+                providerName: 'infura',
+                apiKey: MUMBAI_INFO.INFURA_API_KEY,
+                available: true
+            }
+        ],
+        tokens: [
+            {
+                tokenName: 'matic',
                 tokenAddress: '',
                 nativeToken: true
             },
@@ -41,12 +70,20 @@ const NetworkConst = {
             return false
         }
     },
-    getProvider: function (networkName) {
+    getProvider: function (networkName, providerName) {
         if (this.isListed(networkName)) {
             const { providers } = networks.find(n => n.networkName === networkName.toLowerCase())
             if (providers.length > 0) {
-                const providerInfo = providers.find(p => p.available === true)
+                let providerInfo
+                if(providerName === undefined){
+                    console.log('no providerName')
+                    providerInfo = providers.find(p => p.available === true)
+                } else {
+                    console.log('with providerNAme')
+                    providerInfo = providers.find(p => (p.available === true && p.providerName === providerName))
+                }
                 if (providerInfo) {
+                    console.log(providerInfo.providerName)
                     switch (providerInfo.providerName) {
                         case 'alchemy':
                             return new ethers.providers.AlchemyProvider(networkName, providerInfo.apiKey)
@@ -87,7 +124,7 @@ const NetworkConst = {
             if(token){
                 const tokenInfo = {
                     ...token,
-                    tokenContract: new ethers.Contract(token.tokenAddress, abi)
+                    tokenContract: token.nativeToken ? "" : new ethers.Contract(token.tokenAddress, abi)
                 }
                 return tokenInfo
             } else {

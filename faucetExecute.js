@@ -11,10 +11,10 @@ const getProvider = networkObj => {
 }
 
 
-const sendToken = async (network, token, receiver, value) => {
+const sendToken = async (network, token, receiver, value, providerName) => {
     if(NetworkConst.isListed(network)){
-        
-            const provider = NetworkConst.getProvider(network)
+
+            const provider = NetworkConst.getProvider(network, providerName)
             const wallet = NetworkConst.getWallet(network)
             const tokenInfo = NetworkConst.getToken(network, token)
             let tx;
@@ -44,4 +44,4 @@ const sendToken = async (network, token, receiver, value) => {
 
 }
 
-sendToken('goerli', 'link','0xF3f5F2577cc3d735788922A006Fa10C49115Ddf6', '0.01')
+sendToken('maticmum', 'matic','0xF3f5F2577cc3d735788922A006Fa10C49115Ddf6', '0.01', 'alchemy')
