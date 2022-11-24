@@ -1,22 +1,11 @@
 const { ethers } = require('ethers')
-const {GOERLI_INFO, MUMBAI_INFO} = require('./config.json')
-const {abi} = require('./IERC20.json')
+const { GOERLI_INFO, MUMBAI_INFO, ALFAJORES_INFO } = require('./config.json')
+const { abi } = require('./IERC20.json')
 const networks = [
     {
         networkName: 'goerli',
         walletPrivateKey: GOERLI_INFO.WALLET_PRIVATE_KEY,
-        providers: [
-            {
-                providerName: 'alchemy',
-                apiKey: GOERLI_INFO.ALCHEMY_API_KEY,
-                available: true
-            },
-            {
-                providerName: 'infura',
-                apiKey: GOERLI_INFO.INFURA_API_KEY,
-                available: true
-            }
-        ],
+        jsonRPCURL: GOERLI_INFO.JSON_RPC_URL,
         tokens: [
             {
                 tokenName: 'eth',
@@ -33,18 +22,7 @@ const networks = [
     {
         networkName: 'maticmum',
         walletPrivateKey: MUMBAI_INFO.WALLET_PRIVATE_KEY,
-        providers: [
-            {
-                providerName: 'alchemy',
-                apiKey: MUMBAI_INFO.ALCHEMY_API_KEY,
-                available: true
-            },
-            {
-                providerName: 'infura',
-                apiKey: MUMBAI_INFO.INFURA_API_KEY,
-                available: true
-            }
-        ],
+        jsonRPCURL: MUMBAI_INFO.JSON_RPC_URL,
         tokens: [
             {
                 tokenName: 'matic',
@@ -55,6 +33,18 @@ const networks = [
                 tokenName: 'link',
                 tokenAddress: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
                 nativeToken: false
+            }
+        ]
+    },
+    {
+        networkName: 'alfajores',
+        walletPrivateKey: ALFAJORES_INFO.WALLET_PRIVATE_KEY,
+        jsonRPCURL: ALFAJORES_INFO.JSON_RPC_URL,
+        tokens: [
+            {
+                tokenName: 'celo',
+                tokenAddress: '',
+                nativeToken: true
             }
         ]
     },
@@ -70,32 +60,13 @@ const NetworkConst = {
             return false
         }
     },
-    getProvider: function (networkName, providerName) {
+    getProviderWithJsonRpcUrl: function (networkName) {
         if (this.isListed(networkName)) {
-            const { providers } = networks.find(n => n.networkName === networkName.toLowerCase())
-            if (providers.length > 0) {
-                let providerInfo
-                if(providerName === undefined){
-                    console.log('no providerName')
-                    providerInfo = providers.find(p => p.available === true)
-                } else {
-                    console.log('with providerNAme')
-                    providerInfo = providers.find(p => (p.available === true && p.providerName === providerName))
-                }
-                if (providerInfo) {
-                    console.log(providerInfo.providerName)
-                    switch (providerInfo.providerName) {
-                        case 'alchemy':
-                            return new ethers.providers.AlchemyProvider(networkName, providerInfo.apiKey)
-                        case 'infura':
-                            return new ethers.providers.InfuraProvider(networkName, providerInfo.apiKey)
-                    }
-
-                } else {
-                    throw new Error('No registered providers are not available')
-                }
+            const { jsonRPCURL} = networks.find(n => n.networkName === networkName.toLowerCase())
+            if(jsonRPCURL){
+                return new ethers.providers.JsonRpcProvider(jsonRPCURL)
             } else {
-                throw new Error('No providers registered')
+                throw new Error('No Json RPC URL provided')
             }
         } else {
             throw new Error('Network not listed')
@@ -121,7 +92,7 @@ const NetworkConst = {
         const network = networks.find(n => n.networkName === networkName.toLowerCase())
         if (network) {
             const token = network.tokens.find(token => token.tokenName === tokenName.toLowerCase())
-            if(token){
+            if (token) {
                 const tokenInfo = {
                     ...token,
                     tokenContract: token.nativeToken ? "" : new ethers.Contract(token.tokenAddress, abi)

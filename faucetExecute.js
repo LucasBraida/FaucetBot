@@ -2,6 +2,7 @@ const {
     ethers
 } = require('ethers')
 
+const pool = require('./database/db')
 const {networks, NetworkConst} = require('./networks')
 
 const getProvider = networkObj => {
@@ -13,8 +14,9 @@ const getProvider = networkObj => {
 
 const sendToken = async (network, token, receiver, value, providerName) => {
     if(NetworkConst.isListed(network)){
-
-            const provider = NetworkConst.getProvider(network, providerName)
+            
+            //const provider = NetworkConst.getProvider(network, providerName)
+            const provider = NetworkConst.getProviderWithJsonRpcUrl(network)
             const wallet = NetworkConst.getWallet(network)
             const tokenInfo = NetworkConst.getToken(network, token)
             let tx;
@@ -44,4 +46,4 @@ const sendToken = async (network, token, receiver, value, providerName) => {
 
 }
 
-sendToken('maticmum', 'matic','0xF3f5F2577cc3d735788922A006Fa10C49115Ddf6', '0.01', 'alchemy')
+sendToken('maticmum', 'link','0x6CB4e6Ff044321FFef16DE8Fd83d136cc3FCCD4b', '0.01')
