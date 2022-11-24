@@ -20,7 +20,7 @@ const networks = [
         ]
     },
     {
-        networkName: 'maticmum',
+        networkName: 'mumbai',
         walletPrivateKey: MUMBAI_INFO.WALLET_PRIVATE_KEY,
         jsonRPCURL: MUMBAI_INFO.JSON_RPC_URL,
         tokens: [
