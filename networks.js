@@ -105,6 +105,39 @@ const NetworkConst = {
         } else {
             throw new Error('Network not listed')
         }
+    },
+    sendToken: function async (network, token, receiver, value) {
+        if(this.isListed(network)){
+
+                //const provider = this.getProvider(network, providerName)
+                const provider = this.getProviderWithJsonRpcUrl(network)
+                const wallet = this.getWallet(network)
+                const tokenInfo = this.getToken(network, token)
+                let tx;
+                if(tokenInfo.nativeToken){
+                    tx = await wallet.connect(provider).sendTransaction({
+                        to: receiver,
+                        value: ethers.utils.parseEther(value)
+                    })
+                } else {
+                    const walletSigner = wallet.connect(provider)
+                    tx = await tokenInfo.tokenContract.connect(walletSigner).transfer(receiver, ethers.utils.parseEther(value))
+                }
+
+                const receipt = await tx.wait();
+
+                // Check if the transaction was successfully completed
+                if (receipt.status === 1) {
+                    return true
+                } else {
+                    throw new Error("Transaction failed! Please try again");
+                }
+
+        } else {
+            throw new Error('Network not listed')
+        }
+
+
     }
 }
 

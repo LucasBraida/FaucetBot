@@ -6,7 +6,7 @@ const {NetworkConst} = require('./networks')
 
 
 
-const sendToken = async (network, token, receiver, value, providerName) => {
+const sendToken = async (network, token, receiver, value) => {
     if(NetworkConst.isListed(network)){
 
             //const provider = NetworkConst.getProvider(network, providerName)
