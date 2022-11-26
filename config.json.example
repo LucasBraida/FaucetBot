@@ -1,0 +1,18 @@
+{
+    "token": "BOT TOKEN",
+    "clientId": "BOT APPLICATION ID",
+    "guildId": "SERVER ID",
+    "dbPasswd": "DATABASE PASSWORD",
+    "GOERLI_INFO": {
+        "WALLET_PRIVATE_KEY": "PRIVATE KEY",
+        "JSON_RPC_URL": "RPC URL"
+    },
+    "MUMBAI_INFO":{
+        "WALLET_PRIVATE_KEY": "PRIVATE KEY",
+        "JSON_RPC_URL": "RPC URL"
+    },
+    "ALFAJORES_INFO":{
+        "WALLET_PRIVATE_KEY": "PRIVATE KEY",
+        "JSON_RPC_URL": "RPC URL"
+    }
+}

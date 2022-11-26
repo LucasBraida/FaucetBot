@@ -1,57 +1,9 @@
 const { ethers } = require('ethers')
-const { GOERLI_INFO, MUMBAI_INFO, ALFAJORES_INFO } = require('./config.json')
 const { abi } = require('./IERC20.json')
-const networks = [
-    {
-        networkName: 'goerli',
-        walletPrivateKey: GOERLI_INFO.WALLET_PRIVATE_KEY,
-        jsonRPCURL: GOERLI_INFO.JSON_RPC_URL,
-        tokens: [
-            {
-                tokenName: 'eth',
-                tokenAddress: '',
-                nativeToken: true
-            },
-            {
-                tokenName: 'link',
-                tokenAddress: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
-                nativeToken: false
-            }
-        ]
-    },
-    {
-        networkName: 'mumbai',
-        walletPrivateKey: MUMBAI_INFO.WALLET_PRIVATE_KEY,
-        jsonRPCURL: MUMBAI_INFO.JSON_RPC_URL,
-        tokens: [
-            {
-                tokenName: 'matic',
-                tokenAddress: '',
-                nativeToken: true
-            },
-            {
-                tokenName: 'link',
-                tokenAddress: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
-                nativeToken: false
-            }
-        ]
-    },
-    {
-        networkName: 'alfajores',
-        walletPrivateKey: ALFAJORES_INFO.WALLET_PRIVATE_KEY,
-        jsonRPCURL: ALFAJORES_INFO.JSON_RPC_URL,
-        tokens: [
-            {
-                tokenName: 'celo',
-                tokenAddress: '',
-                nativeToken: true
-            }
-        ]
-    },
+const networks = require('./networks')
 
-]
 
-const NetworkConst = {
+const networkManager = {
     isListed: (networkName) => {
         const network = networks.find(n => n.networkName === networkName.toLowerCase())
         if (network) {
@@ -106,10 +58,9 @@ const NetworkConst = {
             throw new Error('Network not listed')
         }
     },
-    sendToken: function async (network, token, receiver, value) {
+    sendToken: async function (network, token, receiver, value) {
         if(this.isListed(network)){
 
-                //const provider = this.getProvider(network, providerName)
                 const provider = this.getProviderWithJsonRpcUrl(network)
                 const wallet = this.getWallet(network)
                 const tokenInfo = this.getToken(network, token)
@@ -141,4 +92,4 @@ const NetworkConst = {
     }
 }
 
-module.exports = { networks, NetworkConst }
+module.exports = networkManager
